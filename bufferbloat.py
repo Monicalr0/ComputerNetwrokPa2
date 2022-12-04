@@ -118,8 +118,7 @@ def start_iperf(net):
     # long lived TCP flow. You may need to redirect iperf's stdout to avoid blocking.
     h1 = net.get('h1')
     print "Starting iperf client"
-    client = h1.popen("iperf -c %s -t %s" % (h2.IP(), args.time))
-    client.communicate() #Prevent iperf output blocking
+    h1.popen("iperf -c %s -t %s" % (h2.IP(), args.time)).communicate() #Prevent iperf output blocking
 
 def start_webserver(net):
     h1 = net.get('h1')
@@ -142,10 +141,11 @@ def start_ping(net):
     popen = h1.popen("echo '' > %s/ping.txt"%(args.dir), shell=True)
     h2 = net.get('h2')
     #Times 10 because ping 10 time per second
-    ping = h1.popen("ping -c %s -i 0.1 %s > %s/ping.txt"%(10*args.time, h2.IP(), args.dir), shell=True)
-    ping.communicate()
+    ping = h1.popen("ping -c %s -i 0.1 %s > %s/ping.txt"%(10*args.time, h2.IP(), args.dir), shell=True).communicate()
 
-def measure_time(h1, h2):
+def measure_time(net):
+    h1 = net.get('h1')
+    h2 = net.get('h2')
     measure = h2.popen("curl -o /dev/null -s -w %%{time_total} %s/http/index.html"%(h1.IP())).communicate()[0]
     return float(measure)
     
@@ -191,7 +191,7 @@ def bufferbloat():
     # debug.  It allows you to run arbitrary commands inside your
     # emulated hosts h1 and h2.
     #
-    # CLI(net)
+    #CLI(net)
 
     # TODO: measure the time it takes to complete webpage transfer
     # from h1 to h2 (say) 3 times.  Hint: check what the following
@@ -202,13 +202,11 @@ def bufferbloat():
     # loop below useful.
     start_time = time()
     time_measurements = []
-    h1 = net.get('h1')
-    h2 = net.get('h2')
     while True:
         # do the measurement (say) 3 times.
         sleep(5)
         for i in range(3):
-            time_measurements.append(measure_time(h1,h2))
+            time_measurements.append(measure_time(net))
         now = time()
         delta = now - start_time
         if delta > args.time:

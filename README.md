@@ -8,9 +8,7 @@ Ans: The average webpage fetch time for small router buffer is  . The average we
 
 2. Bufferbloat can occur in other places such as your network interface card (NIC). Check the output of ifconfig eth0 on your VirtualBox VM. What is the (maximum) transmit queue length on the network interface reported by ifconfig? For this queue size and a draining rate of 100 Mbps, what is the maximum time a packet might wait in the queue before it leaves the NIC?
 Ans: The maximum transmit queue length reported by ifconfig is 1000.For this queue size and a draining rate of 100 Mbps, the maixum time a packet might wait in the queue before it leav NIC is (packet in TCP layter around 1500 bytes): 
-1500 * 1500 * 8 / ( 100 * 10^6) = 0.12s
-
-
+1000 * 1500 * 8 / ( 100 * 10^6) = 0.12s
 
 
 3. How does the RTT reported by ping vary with the queue size? Write a symbolic equation to describe the relation between the two (ignore computation overheads in ping that might affect the final result).
