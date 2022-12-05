@@ -118,7 +118,7 @@ def start_iperf(net):
     # long lived TCP flow. You may need to redirect iperf's stdout to avoid blocking.
     h1 = net.get('h1')
     print "Starting iperf client"
-    h1.popen("iperf -c %s -t %s" % (h2.IP(), args.time)).communicate() #Prevent iperf output blocking
+    h1.popen("iperf -c %s -t %s > %s/iperf.txt" % (h2.IP(), args.time, args.dir), shell=True)
 
 def start_webserver(net):
     h1 = net.get('h1')
@@ -141,7 +141,7 @@ def start_ping(net):
     popen = h1.popen("echo '' > %s/ping.txt"%(args.dir), shell=True)
     h2 = net.get('h2')
     #Times 10 because ping 10 time per second
-    ping = h1.popen("ping -c %s -i 0.1 %s > %s/ping.txt"%(10*args.time, h2.IP(), args.dir), shell=True).communicate()
+    ping = h1.popen("ping -c %s -i 0.1 %s > %s/ping.txt"%(10*args.time, h2.IP(), args.dir), shell=True)
 
 def measure_time(net):
     h1 = net.get('h1')
